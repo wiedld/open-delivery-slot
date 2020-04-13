@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Open Slot Delivery",
+    "version": "1.0",
+    "description": "Notify when open delivery slot is available.",
+    "background": {
+        "scripts": ["common.js", "background.js"]
+    },
+    "content_scripts": [
+        {
+          "matches": ["https://www.target.com/co-scheduledelivery"],
+          "js": ["common.js", "target_watcher.js"]
+        },
+        {
+          "matches": ["https://www.instacart.com/store/checkout_v3"],
+          "js": ["common.js", "instacart_watcher.js"]
+        }
+      ],
+    "icons": {
+      "48": "icons/border-48.png"
+    },
+    "permissions": [
+        "activeTab",
+        "notifications"
+    ]
+  }
