@@ -1,13 +1,3 @@
-const TARGET_BUSY = "target_busy";
-const TARGET_OPEN = "target_open";
-const TARGET_SESSION_END = "target_session_ended";
-
-const NOTIFICATION_HEADING = "Message from OPEN DELIVERY SLOT:";
-const PERMISSIONS = "PERMISSIONS";
-const RELOAD_TAB = "RELOAD_TAB";
-const START = "START";
-
-
 function requestPermissions (url) {
     if (!("Notification" in window))
         return alert(`${NOTIFICATION_HEADING}\nThis browser does not support desktop notifications.\nWatcher is inactive.`);
@@ -16,16 +6,9 @@ function requestPermissions (url) {
         Notification.requestPermission().then(function (permission) {
             // FIXME: stackoverflow said we need to store user entered permission, for chrome addon. true?
             // Notification.permission = permission;
-
-            // FIXME: this callback is not waiting until afterwards.
-            // console.log("permission", permission);
-            if (permission === "granted") {
-                // console.log("HEREAS")
-                notify("", RELOAD_TAB);
-            }
         });
     else
-        return alert(`${NOTIFICATION_HEADING}\n${url} is not yet supported.`);
+        return alert(`${NOTIFICATION_HEADING}\n${url} is not supported.`);
 
 }
 
@@ -34,8 +17,11 @@ browser.runtime.onMessage.addListener(msg => {
     switch (msg.action) {
         case PERMISSIONS:
             return requestPermissions(msg.url);
-        case START:
-            return search(document.body);
+        case ACTIVATE_SEARCH:
+        {
+            sessionStorage.setItem('ODS_search', 'true');
+            return activateSearch();
+        }  
         default:
             return;
     }

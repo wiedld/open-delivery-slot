@@ -32,11 +32,8 @@ function search (root) {
             return notify(TARGET_OPEN);
     }
 }
-search(document.body);
-
 
 const observer = new MutationObserver((mutations) => {
-    // console.log("connected");
     mutations.forEach((mutation) => {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         for (let i = 0; i < mutation.addedNodes.length; i++) {
@@ -46,11 +43,17 @@ const observer = new MutationObserver((mutations) => {
     });
 });
 
-(function () {
+function activateSearch () {
     observer.observe(document.body, {
         childList: true,
         subtree: true
     });
+    search(document.body);
+}
+
+(function () {
+    if (sessionStorage.getItem('ODS_search') == "true")
+        activateSearch();
 })();
 
 console.log("CONTENT SCRIPT IS LOADED");

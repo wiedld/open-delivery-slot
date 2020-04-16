@@ -35,10 +35,9 @@ browser.runtime.onMessage.addListener(({action}) => {
                 case RELOAD_TAB:
                     return browser.tabs.reload(id); 
                 case TARGET_SESSION_END:
-                    return notify (id, action);
                 case TARGET_OPEN:
                 {
-                    browser.storage.local.remove(id);
+                    browser.storage.local.remove(`${id}`);
                     return notify (id, action);
                 }
                 case TARGET_BUSY:
@@ -59,18 +58,26 @@ browser.runtime.onMessage.addListener(({action}) => {
         });
 });
 
+/*
+    Navigiating away, then back to page --> content scripts are not automatically injected.
+    Will require browserAction.onClicked()
+*/
+function injectContentScripts (id) {
+    return Promise.all([
+        browser.tabs.executeScript(id, { file: "actions.js" }),
+        browser.tabs.executeScript(id, { file: "content/common.js" })])
+            .then(() => browser.tabs.connect(id))
+            .then(() => browser.tabs.executeScript(id, { file: "content/target_watcher.js" }));
+}
 
-browser.browserAction.onClicked.addListener(() => {
-    getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: PERMISSIONS, url }));
-    // getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: START }));
+browser.browserAction.onClicked.addListener(async () => {
+    const { id, url } = await getActiveTab();
+    await injectContentScripts(id);
+    
+    await browser.tabs.sendMessage(id, {action: PERMISSIONS, url });
+    browser.storage.local.remove(`${id}`);
+    await browser.tabs.sendMessage(id, {action: ACTIVATE_SEARCH });
 });
-
-browser.browserAction.onClicked.addListener(() => {
-    // getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: PERMISSIONS, url }));
-    getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: START }));
-});
-
-
 
 browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
     if (temporary) return; // skip during development
