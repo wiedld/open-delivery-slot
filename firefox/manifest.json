@@ -12,7 +12,7 @@
       },
     "content_scripts": [
         {
-          "matches": ["https://www.target.com/co-scheduledelivery"],
+          "matches": ["https://www.target.com/co-scheduledelivery*"],
           "js": ["common.js", "target_watcher.js"]
         },
         {

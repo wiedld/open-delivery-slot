@@ -20,21 +20,23 @@ function sessionEnded (node) {
 
 
 function search (root) {
+    console.log("SEARCH");
     if (document.getElementById('login'))
         notify(TARGET_SESSION_END);
 
     const nodes = root.getElementsByTagName("H3");
     for (let i = 0; i < nodes.length; i++) {
         if (noDeliveryAvailable(nodes.item(i)))
-            return notify(TARGET_BUSY_MSG);
+            return notify(TARGET_BUSY);
         if (deliveryAvailable(nodes.item(i)))
-            return notify(TARGET_OPEN_MSG);
+            return notify(TARGET_OPEN);
     }
 }
 search(document.body);
 
 
 const observer = new MutationObserver((mutations) => {
+    // console.log("connected");
     mutations.forEach((mutation) => {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         for (let i = 0; i < mutation.addedNodes.length; i++) {
@@ -44,7 +46,11 @@ const observer = new MutationObserver((mutations) => {
     });
 });
 
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+(function () {
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+})();
+
+console.log("CONTENT SCRIPT IS LOADED");

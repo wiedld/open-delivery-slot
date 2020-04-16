@@ -1,11 +1,12 @@
-const TARGET_BUSY_MSG = "target_busy";
-const TARGET_OPEN_MSG = "target_open";
+const TARGET_BUSY = "target_busy";
+const TARGET_OPEN = "target_open";
 const TARGET_SESSION_END = "target_session_ended";
 
 const NOTIFICATION_HEADING = "Message from OPEN DELIVERY SLOT:";
 const PERMISSIONS = "PERMISSIONS";
 const RELOAD_TAB = "RELOAD_TAB";
-const NOTIFY = "NOTIFY";
+const START = "START";
+
 
 function requestPermissions (url) {
     if (!("Notification" in window))
@@ -17,9 +18,9 @@ function requestPermissions (url) {
             // Notification.permission = permission;
 
             // FIXME: this callback is not waiting until afterwards.
-            console.log("permission", permission);
+            // console.log("permission", permission);
             if (permission === "granted") {
-                console.log("HEREAS")
+                // console.log("HEREAS")
                 notify("", RELOAD_TAB);
             }
         });
@@ -29,21 +30,24 @@ function requestPermissions (url) {
 }
 
 browser.runtime.onMessage.addListener(msg => {
+    console.log(msg.action)
     switch (msg.action) {
         case PERMISSIONS:
             return requestPermissions(msg.url);
+        case START:
+            return search(document.body);
         default:
             return;
     }
 });
 
 
-function notify (msg, action = NOTIFY) {
+function notify (action) {
     if (Notification.permission !== "granted")
         return;
 
-    console.log(msg);
-    browser.runtime.sendMessage({ msg, action });
+    console.log(action);
+    browser.runtime.sendMessage({ action });
 }
 exportFunction(notify, window, { defineAs: 'notify' });
 

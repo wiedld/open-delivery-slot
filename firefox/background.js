@@ -11,29 +11,48 @@ async function getActiveTab() {
     return tabArray[0];
 }
 
-function handleMessage (msg, tabId) {
-    if (msg === TARGET_BUSY_MSG) {
-        delayedReload(tabId);
+function handleMessage (msg) {
+    if (msg === TARGET_BUSY)
         return "Target has no open delivery windows.\nWe will notify you when this changes.";
-    }
-    else if (msg === TARGET_OPEN_MSG)
+    else if (msg === TARGET_OPEN)
         return "Target has an open delivery windows.";
     else if (msg === TARGET_SESSION_END)
         return "Your Target session has ended. Please log in again.";
 };
 
-browser.runtime.onMessage.addListener(({msg, action}) => {
+function notify (id, msg) {
+    return browser.notifications.create(`${id}`, {
+        type: "basic",
+        title: `${NOTIFICATION_HEADING}`,
+        message: handleMessage(msg)
+    });
+}
+
+browser.runtime.onMessage.addListener(({action}) => {
     getActiveTab()
         .then(({id}) => {
             switch (action) {
-                case NOTIFY:
-                    return browser.notifications.create(`${id}`, {
-                        type: "basic",
-                        title: `${NOTIFICATION_HEADING}`,
-                        message: handleMessage(msg, id)
-                    });
                 case RELOAD_TAB:
-                    return browser.tabs.reload(id);
+                    return browser.tabs.reload(id); 
+                case TARGET_SESSION_END:
+                    return notify (id, action);
+                case TARGET_OPEN:
+                {
+                    browser.storage.local.remove(id);
+                    return notify (id, action);
+                }
+                case TARGET_BUSY:
+                {
+                    delayedReload(id);
+                    browser.storage.local.get().then(prev => {
+                        if (prev[id] === action)
+                            return;
+                        else {
+                            browser.storage.local.set({ ...prev, [id]: action });
+                            return notify (id, action);
+                        }
+                    });
+                }
                 default:
                     return;
             }
@@ -43,7 +62,15 @@ browser.runtime.onMessage.addListener(({msg, action}) => {
 
 browser.browserAction.onClicked.addListener(() => {
     getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: PERMISSIONS, url }));
+    // getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: START }));
 });
+
+browser.browserAction.onClicked.addListener(() => {
+    // getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: PERMISSIONS, url }));
+    getActiveTab().then(({id,url}) => browser.tabs.sendMessage(id, {action: START }));
+});
+
+
 
 browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
     if (temporary) return; // skip during development
@@ -57,22 +84,3 @@ browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
         break;
     }
   });
-
-
-/*
-FIXME/TODO:
-- examine http request response instead?
-    https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest
-
-- how stop from re-trigger each time we check (and still not open)?
-
-- 
-
-- get to work: instacart, amazon fresh
-- code cleanup
-- https://developer.walmart.com/#/home
-
-LATER:
-- port over to Chrome
-*/
-
