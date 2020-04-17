@@ -1,6 +1,10 @@
-const TARGET_BUSY = "target_busy";
-const TARGET_OPEN = "target_open";
-const TARGET_SESSION_END = "target_session_ended";
+const TARGET = "Target";
+const INSTACART = "Instacart";
+const BAD_SITE = "bad_site";
+
+const BUSY = "busy";
+const OPEN = "open";
+const SESSION_END = "session_ended";
 
 const NOTIFICATION_HEADING = "Message from OPEN DELIVERY SLOT:";
 const PERMISSIONS = "PERMISSIONS";

@@ -1,6 +1,6 @@
 'use strict';
 
-
+const sessionKey = 'ODS_search_target';
 const nada = "No delivery windows available";
 const nada2 = "No available delivery times";
 const happiness = "Delivery Window";
@@ -22,14 +22,14 @@ function sessionEnded (node) {
 function search (root) {
     console.log("SEARCH");
     if (document.getElementById('login'))
-        notify(TARGET_SESSION_END);
+        notify(SESSION_END, TARGET);
 
     const nodes = root.getElementsByTagName("H3");
     for (let i = 0; i < nodes.length; i++) {
         if (noDeliveryAvailable(nodes.item(i)))
-            return notify(TARGET_BUSY);
+            return notify(BUSY, TARGET);
         if (deliveryAvailable(nodes.item(i)))
-            return notify(TARGET_OPEN);
+            return notify(OPEN, TARGET);
     }
 }
 
@@ -52,7 +52,7 @@ function activateSearch () {
 }
 
 (function () {
-    if (sessionStorage.getItem('ODS_search') == "true")
+    if (sessionStorage.getItem(sessionKey) == "true")
         activateSearch();
 })();
 
