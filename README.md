@@ -41,7 +41,8 @@ Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not g
 
 
 ## Troubleshooting:
-Firefox Preferences does not explicitly have settings to enable/disable certain Service Workers. As a result, if you have selected `"Never remember history"` then it will disable the workers. Instead, we recommend `"Use custom settings for history"` and to select/deselect the subcategories.
+* Firefox Preferences does not explicitly have settings to enable/disable certain Service Workers. As a result, if you have selected `"Never remember history"` then it will disable the workers. Instead, we recommend `"Use custom settings for history"` and to select/deselect the subcategories.
+* Installation is performed as a temporary plugin. If you restart your browser, you need to repeat step #2 under "Installation".
 
 
 ## Etc
