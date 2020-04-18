@@ -1,8 +1,9 @@
 "use strict";
 
 
-function delayedReload (tabId) {
-    setTimeout(() => browser.tabs.reload(tabId), 1000*60*4);
+function delayedReload (tabId, site) {
+    const timeout = site === AMAZON_FRESH ? 1000*60*2 : 1000*60*4;
+    setTimeout(() => browser.tabs.reload(tabId), timeout);
 }
 
 async function getActiveTab () {
@@ -11,7 +12,7 @@ async function getActiveTab () {
 }
 
 function extractSite (url) {
-    return /target/g.test(url) ? TARGET
+    return /target\.com/g.test(url) ? TARGET
         : /instacart/g.test(url) ? INSTACART
         : /amazon\.com\/gp\/buy\/shipoptionselect/g.test(url) ? AMAZON_FRESH
         : BAD_SITE;
@@ -47,7 +48,7 @@ browser.runtime.onMessage.addListener(({action,site,id:raw}) => {
         }
         case BUSY:
         {
-            delayedReload(id);
+            delayedReload(id, site);
             browser.storage.local.get().then(prev => {
                 if (prev[`ODS_${id}`] === action)
                     return;

@@ -18,6 +18,7 @@ Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not g
     * unzip/extract the download.
 
 2. Install the extension locally.
+    * Follow the below instructions. The file you are seeking (after upzipping) is `./open-delivery-slot/firefox/manifest.json`.
     * https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/
     * on successful installation, you should witness the hedgehog.
 
