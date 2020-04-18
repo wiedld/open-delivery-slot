@@ -32,6 +32,11 @@
         "notifications",
         "sessions",
         "storage",
-        "tabs"
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "https://www.target.com/co-scheduledelivery*",
+        "https://www.instacart.com/store/checkout_v3",
+        "https://www.amazon.com/gp/buy/shipoptionselect/handlers/display.html?hasWorkingJavascript=1"
     ]
   }

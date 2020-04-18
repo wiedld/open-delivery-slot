@@ -62,6 +62,26 @@ browser.runtime.onMessage.addListener(({action,site,id:raw}) => {
     }
 });
 
+
+const handleRedirectOnSessionEnd = ({statusCode,url}) => {
+    if ([302, 307].includes(statusCode)) {
+        notify("unknown", SESSION_END, extractSite(url));
+    }
+}
+
+browser.webRequest.onHeadersReceived.addListener(
+    handleRedirectOnSessionEnd,
+    {   urls: [
+            "https://www.target.com/co-scheduledelivery*",
+            "https://www.instacart.com/store/checkout_v3",
+            "https://www.amazon.com/gp/buy/shipoptionselect/handlers/display.html?hasWorkingJavascript=1"
+            ],
+        types: ["main_frame"],
+    },
+    ["blocking"]
+);
+
+
 /*
     Navigiating away, then back to page --> content scripts are not always automatically injected.
     Know issue.
