@@ -2,9 +2,8 @@
 
 
 function delayedReload (tabId) {
-    // setTimeout(() => browser.tabs.reload(tabId), 30*60*4);
-    setTimeout(() => browser.tabs.reload(tabId), 1000*60*1);
-    // setTimeout(() => browser.tabs.reload(tabId), 1000*60*4);
+    setTimeout(() => browser.tabs.reload(tabId), 100*60*4);
+    // 1000*60*4
 }
 
 async function getActiveTab() {
@@ -16,7 +15,7 @@ function handleMessage (action, site) {
     if (action === BUSY)
         return `${site} has no open delivery windows.\nWe will notify you when this changes.`;
     else if (action === OPEN)
-        return `${site} has an open delivery windows.`;
+        return `${site} has open delivery windows.`;
     else if (action === SESSION_END)
         return `Your ${site} session has ended. Please log in again.`;
 };
@@ -29,34 +28,32 @@ function notify (id, action, site) {
     });
 }
 
-browser.runtime.onMessage.addListener(({action,site}) => {
-    getActiveTab()
-        .then(({id}) => {
-            switch (action) {
-                case RELOAD_TAB:
-                    return browser.tabs.reload(id); 
-                case SESSION_END:
-                case OPEN:
-                {
-                    browser.storage.local.remove(`${id}`);
+browser.runtime.onMessage.addListener(({action,site,id:raw}) => {
+    const id = parseInt(raw);
+    switch (action) {
+        case RELOAD_TAB:
+            return browser.tabs.reload(id);
+        case SESSION_END:
+        case OPEN:
+        {
+            browser.storage.local.remove(`${id}`);
+            return notify(id, action, site);
+        }
+        case BUSY:
+        {
+            delayedReload(id);
+            browser.storage.local.get().then(prev => {
+                if (prev[id] === action)
+                    return;
+                else {
+                    browser.storage.local.set({ ...prev, [id]: action });
                     return notify(id, action, site);
                 }
-                case BUSY:
-                {
-                    delayedReload(id);
-                    browser.storage.local.get().then(prev => {
-                        if (prev[id] === action)
-                            return;
-                        else {
-                            browser.storage.local.set({ ...prev, [id]: action });
-                            return notify(id, action, site);
-                        }
-                    });
-                }
-                default:
-                    return;
-            }
-        });
+            });
+        }
+        default:
+            return;
+    }
 });
 
 /*
@@ -68,7 +65,11 @@ function injectContentScripts (id, site) {
         browser.tabs.executeScript(id, { file: "actions.js" }),
         browser.tabs.executeScript(id, { file: "content/common.js" })])
             .then(() => browser.tabs.connect(id))
-            .then(() => browser.tabs.executeScript(id, { file: `content/${site}_watcher.js` }));
+            .then(() => 
+            Promise.all([
+                browser.tabs.executeScript(id, { file: `content/${site}.js` }),
+                browser.tabs.executeScript(id, { file: `content/dom_watcher.js` })
+            ]));
 }
 
 browser.browserAction.onClicked.addListener(async () => {
@@ -77,7 +78,9 @@ browser.browserAction.onClicked.addListener(async () => {
         : /instacart/g.test(url) ? INSTACART
         : BAD_SITE;
 
-    await injectContentScripts(id, site.toLowerCase());
+    try {
+        await injectContentScripts(id, site.toLowerCase());
+    } catch (e) {}
     
     await browser.tabs.sendMessage(id, {action: PERMISSIONS, url, notValid: site === BAD_SITE });
     browser.storage.local.remove(`${id}`);

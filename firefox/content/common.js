@@ -1,3 +1,8 @@
+'use strict';
+
+
+const tabKey = 'tabKey';
+
 function requestPermissions ({url, notValid}) {
     if (!("Notification" in window))
         return alert(`${NOTIFICATION_HEADING}\nThis browser does not support desktop notifications.\nWatcher is inactive.`);
@@ -19,6 +24,7 @@ browser.runtime.onMessage.addListener(msg => {
         case ACTIVATE_SEARCH:
         {
             sessionStorage.setItem(sessionKey, 'true');
+            sessionStorage.setItem(tabKey, msg.id);
             return activateSearch();
         }  
         default:
@@ -31,8 +37,9 @@ function notify (action, site) {
     if (Notification.permission !== "granted")
         return;
 
-    console.log(action);
-    browser.runtime.sendMessage({ action, site });
+    const id = sessionStorage.getItem(tabKey);
+    console.log("NOTIFY:", id, action);
+    browser.runtime.sendMessage({ action, site, id });
 }
 exportFunction(notify, window, { defineAs: 'notify' });
 
@@ -43,3 +50,4 @@ const messenger = {
 };
 window.wrappedJSObject.messenger = cloneInto(messenger, window, {cloneFunctions: true});
 
+console.log("LOADED common.js");

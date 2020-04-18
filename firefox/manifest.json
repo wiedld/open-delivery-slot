@@ -13,11 +13,11 @@
     "content_scripts": [
         {
           "matches": ["https://www.target.com/co-scheduledelivery*"],
-          "js": ["actions.js", "content/common.js", "content/target_watcher.js"]
+          "js": ["actions.js", "content/common.js", "content/target.js", "content/dom_watcher.js"]
         },
         {
           "matches": ["https://www.instacart.com/store/checkout_v3"],
-          "js": ["actions.js", "content/common.js", "content/instacart_watcher.js"]
+          "js": ["actions.js", "content/common.js", "content/instacart.js", "content/dom_watcher.js"]
         }
       ],
     "icons": {
