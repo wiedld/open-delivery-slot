@@ -8,7 +8,6 @@ const sessionHasEnded = "Login";
 
 
 function search (root) {
-    console.log("SEARCH");
     const nodesBut = document.getElementsByTagName("BUTTON");
     for (let i = 0; i < nodesBut.length; i++) {
         if (sessionEnded(nodesBut.item(i)))
@@ -25,5 +24,3 @@ function search (root) {
     if (tabs.length > 0)
         return notify(OPEN, INSTACART);
 }
-
-console.log("LOADED instacart.js");

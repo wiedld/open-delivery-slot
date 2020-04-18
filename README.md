@@ -7,6 +7,7 @@ Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not g
 
 1. Download the extension.
     * [For non-devs, click here to download.](https://github.com/wiedld/open-delivery-slot/archive/master.tar.gz)
+    * unzip/extract the download.
 
 2. Install the extension locally.
     * https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/

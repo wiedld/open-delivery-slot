@@ -17,7 +17,6 @@ function requestPermissions ({url, notValid}) {
 }
 
 browser.runtime.onMessage.addListener(msg => {
-    console.log(msg)
     switch (msg.action) {
         case PERMISSIONS:
             return requestPermissions(msg);
@@ -49,5 +48,3 @@ const messenger = {
     }
 };
 window.wrappedJSObject.messenger = cloneInto(messenger, window, {cloneFunctions: true});
-
-console.log("LOADED common.js");

@@ -2,13 +2,19 @@
 
 
 function delayedReload (tabId) {
-    setTimeout(() => browser.tabs.reload(tabId), 100*60*4);
-    // 1000*60*4
+    setTimeout(() => browser.tabs.reload(tabId), 1000*60*4);
 }
 
-async function getActiveTab() {
+async function getActiveTab () {
     let tabArray = await browser.tabs.query({currentWindow: true, active: true});
     return tabArray[0];
+}
+
+function extractSite (url) {
+    return /target/g.test(url) ? TARGET
+        : /instacart/g.test(url) ? INSTACART
+        : /amazon\.com\/gp\/buy\/shipoptionselect/g.test(url) ? AMAZON_FRESH
+        : BAD_SITE;
 }
 
 function handleMessage (action, site) {
@@ -36,17 +42,17 @@ browser.runtime.onMessage.addListener(({action,site,id:raw}) => {
         case SESSION_END:
         case OPEN:
         {
-            browser.storage.local.remove(`${id}`);
+            browser.storage.local.remove(`ODS_${id}`);
             return notify(id, action, site);
         }
         case BUSY:
         {
             delayedReload(id);
             browser.storage.local.get().then(prev => {
-                if (prev[id] === action)
+                if (prev[`ODS_${id}`] === action)
                     return;
                 else {
-                    browser.storage.local.set({ ...prev, [id]: action });
+                    browser.storage.local.set({ ...prev, [`ODS_${id}`]: action });
                     return notify(id, action, site);
                 }
             });
@@ -57,8 +63,9 @@ browser.runtime.onMessage.addListener(({action,site,id:raw}) => {
 });
 
 /*
-    Navigiating away, then back to page --> content scripts are not automatically injected.
-    Will require browserAction.onClicked()
+    Navigiating away, then back to page --> content scripts are not always automatically injected.
+    Know issue.
+    Hence, will require browserAction.onClicked() every time you start the watcher.
 */
 function injectContentScripts (id, site) {
     return Promise.all([
@@ -67,16 +74,14 @@ function injectContentScripts (id, site) {
             .then(() => browser.tabs.connect(id))
             .then(() => 
             Promise.all([
-                browser.tabs.executeScript(id, { file: `content/${site}.js` }),
-                browser.tabs.executeScript(id, { file: `content/dom_watcher.js` })
+                browser.tabs.executeScript(id, { file: `content/${site.toLowerCase()}.js` }),
+                browser.tabs.executeScript(id, { file: `content/watcher.js` })
             ]));
 }
 
 browser.browserAction.onClicked.addListener(async () => {
     const { id, url } = await getActiveTab();
-    const site = /target/g.test(url) ? TARGET
-        : /instacart/g.test(url) ? INSTACART
-        : BAD_SITE;
+    const site = extractSite(url);
 
     try {
         await injectContentScripts(id, site.toLowerCase());
@@ -88,14 +93,14 @@ browser.browserAction.onClicked.addListener(async () => {
 });
 
 browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
-    if (temporary) return; // skip during development
+    // if (temporary) return; // skip during development
     switch (reason) {
         case "install":
-        case "update":
         {
             const url = browser.runtime.getURL("views/installed.html");
             await browser.tabs.create({ url });
         }
-        break;
+        case "update":
+            break;
     }
   });

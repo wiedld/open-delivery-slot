@@ -9,7 +9,6 @@ const sessionHasEnded = "Sign into your Target account";
 
 
 function search (root) {
-    console.log("SEARCH");
     if (document.getElementById('login'))
         notify(SESSION_END, TARGET);
 
@@ -21,5 +20,3 @@ function search (root) {
             return notify(OPEN, TARGET);
     }
 }
-
-console.log("LOADED target.js");
