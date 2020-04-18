@@ -13,11 +13,15 @@
     "content_scripts": [
         {
           "matches": ["https://www.target.com/co-scheduledelivery*"],
-          "js": ["actions.js", "content/common.js", "content/target.js", "content/dom_watcher.js"]
+          "js": ["actions.js", "content/common.js", "content/target.js", "content/watcher.js"]
         },
         {
           "matches": ["https://www.instacart.com/store/checkout_v3"],
-          "js": ["actions.js", "content/common.js", "content/instacart.js", "content/dom_watcher.js"]
+          "js": ["actions.js", "content/common.js", "content/instacart.js", "content/watcher.js"]
+        },
+        {
+          "matches": ["https://www.amazon.com/gp/buy/shipoptionselect/handlers/display.html?hasWorkingJavascript=1"],
+          "js": ["actions.js", "content/common.js", "content/amazonfresh.js", "content/watcher.js"]
         }
       ],
     "icons": {

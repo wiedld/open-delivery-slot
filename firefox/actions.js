@@ -1,5 +1,6 @@
 const TARGET = "Target";
 const INSTACART = "Instacart";
+const AMAZON_FRESH = "AmazonFresh";
 const BAD_SITE = "bad_site";
 
 const BUSY = "busy";

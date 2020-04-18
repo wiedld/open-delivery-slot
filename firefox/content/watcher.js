@@ -35,5 +35,3 @@ function activateSearch () {
     if (sessionStorage.getItem(sessionKey) == "true")
         activateSearch();
 })();
-
-console.log("LOADED dom_watcher.js");
