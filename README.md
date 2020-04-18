@@ -1,4 +1,4 @@
-## General Overview.
+## General Overview:
 Install browser extension. Trigger the extension when you are on the webpage which states "no delivery windows are available". Notification will be posted when a slot opens. If your session logs out, it will also notify you to login again.
 
 Currently only in Firefox.
@@ -38,6 +38,10 @@ Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not g
 5. OpenDeliverySlot will reload the page every few minutes, and push a notification if a slot opens up.
 
 6. If you navigate away from that page (within that tab) and return, then you will need to trigger the watcher again.
+
+
+## Troubleshooting:
+Firefox Preferences does not explicitly have settings to enable/disable certain Service Workers. As a result, if you have selected `"Never remember history"` then it will disable the workers. Instead, we recommend `"Use custom settings for history"` and to select/deselect the subcategories.
 
 
 ## Etc
