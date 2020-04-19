@@ -14,7 +14,7 @@ Currently only in Firefox.
 Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not gone through the add-on/extension review process yet. Must manually install.
 
 1. Download the extension.
-    * [For non-devs, click here to download.](https://github.com/wiedld/open-delivery-slot/archive/master.tar.gz)
+    * For non-devs, click here to download: [Mac OS users.](https://github.com/wiedld/open-delivery-slot/archive/master.tar.gz) [Windows users.](https://github.com/wiedld/open-delivery-slot/archive/master.zip)
     * unzip/extract the download.
 
 2. Install the extension locally.
