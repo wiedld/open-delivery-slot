@@ -18,9 +18,12 @@ Currently in beta testing (covid-19 limited release) with Friends&Fam. Has not g
     * unzip/extract the download.
 
 2. Install the extension locally.
-    * Follow the below instructions. The file you are seeking (after upzipping) is `./open-delivery-slot/firefox/manifest.json`.
-    * https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/
-    * on successful installation, you should witness the hedgehog.
+    * Open a new tab in Firefox
+    * Type “about:debugging” in the search bar and hit <enter>
+    * Click the blue <This Firefox> (under Setup)
+    * Click <Load Temporary Add-on…>
+    * Browse to where you downloaded `open-delivery-slot-master\firefox`. Select the file `manifest.json`
+    * On successful installation, you should witness the hedgehog.
 
 
 ## How to Use:
